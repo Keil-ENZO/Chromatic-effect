@@ -20,7 +20,6 @@ export default function Home() {
   const mountRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Tout le code Three.js va ici
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
       75,
@@ -35,7 +34,6 @@ export default function Home() {
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
 
-    // Ajouter le renderer au DOM
     if (mountRef.current) {
       mountRef.current.appendChild(renderer.domElement);
     }
@@ -53,7 +51,6 @@ export default function Home() {
     const diamond = createDiamond();
     scene.add(diamond.mesh);
 
-    // stockage pour la photo du fond SANS le diamand au premier plan
     const renderTargetSize = 1024;
     const renderTarget = new THREE.WebGLRenderTarget(
       renderTargetSize,
@@ -80,14 +77,11 @@ export default function Home() {
     function animate() {
       requestAnimationFrame(animate);
 
-      // Hide the glass object
       diamond.mesh.visible = false;
 
-      // Render the scene to the WebGLRenderTarget
       renderer.setRenderTarget(renderTarget);
       renderer.render(scene, camera);
 
-      // Restore the renderer's target and make the glass object visible again
       renderer.setRenderTarget(null);
       diamond.mesh.visible = true;
 
@@ -98,7 +92,6 @@ export default function Home() {
 
     animate();
 
-    // handle window resize
     function onWindowResize() {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
@@ -109,7 +102,7 @@ export default function Home() {
     window.addEventListener("resize", onWindowResize);
 
     function updateDiamondRotation() {
-      const maxRotationDegres = 30;
+      const maxRotationDegres = 80;
       const targetRotationX = map(
         mouse.y,
         -1,
@@ -132,7 +125,6 @@ export default function Home() {
         (targetRotationY - diamond.mesh.rotation.y) * lerpFactor;
     }
 
-    // Nettoyage lors du démontage du composant
     return () => {
       if (mountRef.current) {
         mountRef.current.removeChild(renderer.domElement);
@@ -140,11 +132,10 @@ export default function Home() {
       window.removeEventListener("resize", onWindowResize);
       renderer.dispose();
     };
-  }, []); // Le tableau vide signifie que cet effet ne s'exécute qu'une fois après le premier rendu
+  }, []);
 
   return (
     <div className={`${geistSans.variable} ${geistMono.variable}`}>
-      <h1>Chromatic Effect</h1>
       <div ref={mountRef} style={{ width: "100%", height: "100vh" }}></div>
     </div>
   );
